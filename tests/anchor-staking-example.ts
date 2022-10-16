@@ -28,6 +28,7 @@ describe("staking", async () => {
 
     expect(state.authority.toString()).to.equal(poolOwner.publicKey.toString());
     expect(state.userCount).to.equal(0);
+    expect(state.totalStaked).to.equal(0);
   }),
 
   it('is user created!', async () => {
