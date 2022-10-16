@@ -11,3 +11,8 @@ $ yarn
 $ anchor build
 $ anchor test
 ```
+
+### Deploy with
+```
+anchor deploy --provider.cluster http://localhost:8899
+```
