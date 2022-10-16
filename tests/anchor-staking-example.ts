@@ -43,17 +43,19 @@ describe("staking", async () => {
 
   const stakingProgram = anchor.web3.Keypair.generate()
   const localWallet = (program.provider as anchor.AnchorProvider).wallet
-  
   console.log(`localWallet ${localWallet.publicKey.toString()}`)
 
-  let userAccount = await anchor.web3.Keypair.generate()
+  let userAccount: anchor.web3.Keypair;
+  let anchorTokenMint: anchor.web3.PublicKey;
 
-  before(async () => {
+  before(async () => {    
     // create authority that manages out $ANCHOR token
     const anchorTokenAuthority = await createFundedKeypair(provider.connection)
 
     const anchorTokenMintKeypair = await createKeypairFromFile(".keys/anchor_mint.json")
-    const anchorTokenMint = await createMint(
+    console.log(`anchorTokenMintKeypair ${anchorTokenMintKeypair.publicKey.toString()}`)
+    
+    anchorTokenMint = await createMint(
         provider.connection,
         anchorTokenAuthority, // payer account, in our case is $ANCHOR token authority, but could be any
         anchorTokenAuthority.publicKey, // mint authority is the same as a payer
@@ -62,7 +64,6 @@ describe("staking", async () => {
         anchorTokenMintKeypair // address of our token (it's the same token mint as ANCHOR_MINT_ADDRESS)
     );
 
-    console.log(`anchorTokenMintKeypair ${anchorTokenMintKeypair.publicKey.toString()} == anchorTokenMint ${anchorTokenMint.toString()}`)
     expect(anchorTokenMintKeypair.publicKey.toString()).to.eq(anchorTokenMint.toString())
 
     const programAnchorAta = await getOrCreateAssociatedTokenAccount(
@@ -74,7 +75,9 @@ describe("staking", async () => {
     )
     console.log(`programAnchorAta ${programAnchorAta.address.toString()}`)
 
-    
+    userAccount = await createFundedKeypair(provider.connection)
+    console.log(`user ${userAccount.publicKey.toString()}`)
+  
     const userAnchorAta = await getOrCreateAssociatedTokenAccount(
       provider.connection,
       anchorTokenAuthority, // payer account, in our case is $ANCHOR token authority, but could be any
@@ -91,11 +94,7 @@ describe("staking", async () => {
       userAnchorAta.address,
       anchorTokenAuthority, // a pubkey is not enough, otherwise anyone would be printing tokens!
       anchor.web3.LAMPORTS_PER_SOL,
-    );
-
-    
-    const signature = await provider.connection.requestAirdrop(userAccount.publicKey, anchor.web3.LAMPORTS_PER_SOL);
-    await provider.connection.confirmTransaction(signature);  
+    );  
   });
  
   it('is initialized!', async () => {
@@ -157,7 +156,6 @@ describe("staking", async () => {
       program.programId
     )
 
-    const anchorTokenMint = new anchor.web3.PublicKey("48pUsMs5JsknHsQATf1XE4uPEkCTbA95QzFs9L5UQZxJ")
     console.log(`anchorTokenMint ${anchorTokenMint}`)
     
     const userAnchorAta = await getAssociatedTokenAddress(
