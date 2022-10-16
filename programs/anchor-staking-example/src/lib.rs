@@ -4,7 +4,7 @@ use anchor_spl::token::{self, Mint, Token, TokenAccount};
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 // REPLACE ADDRESS of anchor mint by running solana address -k .keys/anchor_mint.json
-const ANCHOR_MINT_ADDRESS: &str = "AXyTBL1C48WEdpzpY4bcDNsG4B2N918zy2cYsiQFKGBf";
+const ANCHOR_MINT_ADDRESS: &str = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS";
 
 
 #[program]
@@ -123,7 +123,6 @@ pub struct Stake<'info> {
         bump,
     )]
     pub program_anchor_ata: Account<'info, TokenAccount>,
-
     
     // SPL Token Program
     pub token_program: Program<'info, Token>,
