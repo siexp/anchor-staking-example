@@ -185,5 +185,14 @@ describe("staking", async () => {
       })
       .signers([userAccount])
       .rpc()
+
+      expect(parseInt((await provider.connection.getTokenAccountBalance(userAnchorAta)).value.amount)).to.be.eq(0)
+      expect(parseInt((await provider.connection.getTokenAccountBalance(programAnchorAta)).value.amount)).to.be.eq(anchor.web3.LAMPORTS_PER_SOL)
+
+      const state = await program.account.pool.fetch(stakingProgram.publicKey)
+      expect(state.totalStaked.toNumber()).to.equal(anchor.web3.LAMPORTS_PER_SOL)
+   
+      const user = await program.account.user.fetch(userPDA)
+      expect(user.stake.toNumber()).to.equal(anchor.web3.LAMPORTS_PER_SOL)
   })
 });
